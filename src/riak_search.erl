@@ -92,8 +92,10 @@ parse_filter(C, DefaultIndex, Filter) ->
 queue_all_work(Pipe, Results) ->
     %% TODO: use core abilities to decide whether to use list inputs
     case riak_pipe:queue_work_list(Pipe, Results) of
-        [] ->
+        {[],[]} ->
             ok;
-        Rest ->
-            queue_all_work(Pipe, Rest)
+        {Rest,[]} ->
+            queue_all_work(Pipe, Rest);
+        {_Rest, Errors} ->
+            {error, Errors}
     end.
